@@ -44,12 +44,23 @@ export default function CameraScanner({
           fps: 10,
           qrbox: { width: 280, height: 200 },
           aspectRatio: 1.777778, // 16:9
-          // A biblioteca detecta automaticamente todos os formatos suportados:
-          // Códigos 1D: CODE_128, CODE_39, EAN_13, UPC_A, etc
-          // Códigos 2D: QR Code, Data Matrix, PDF_417, Aztec
+          // Suporte explícito para códigos de barras 1D (lineares)
+          // A biblioteca html5-qrcode detecta automaticamente:
+          // - EAN-13 (European Article Number - 13 dígitos, padrão brasileiro)
+          // - UPC-A (Universal Product Code - 12 dígitos, padrão EUA/Canadá)
+          // - EAN-8 (8 dígitos para produtos pequenos)
+          // - CODE_128 (alfanumérico variável)
+          // - CODE_39 (alfanumérico)
+          // - ITF-14 (Interleaved 2 of 5 - 14 dígitos, logística)
+          // - GS1-128 (alfanumérico variável, logística)
+          // - Codabar (numérico)
+          // - QR Code, Data Matrix, PDF_417, Aztec (2D)
+          // Todos os formatos estão habilitados por padrão
         },
         (decodedText) => {
           // Sucesso na leitura
+          console.log('Código escaneado:', decodedText);
+          
           // Vibrar (se disponível)
           if ('vibrate' in navigator) {
             navigator.vibrate(200);
@@ -59,7 +70,7 @@ export default function CameraScanner({
           onScanSuccess(decodedText);
         },
         (errorMessage) => {
-          // Erro de leitura (normal, acontece constantemente)
+          // Erro de leitura (normal, acontece constantemente enquanto procura)
           // Não fazer nada aqui para não poluir o console
         }
       );
@@ -197,7 +208,7 @@ export default function CameraScanner({
             </p>
           </div>
           <p className="text-xs opacity-80">
-            Aceita códigos de barras e QR codes
+            Suporta: EAN-13, UPC-A, EAN-8, ITF-14, GS1-128, CODE-128, CODE-39, QR Code
           </p>
 
           {allowManualInput && !showManualInput && (
