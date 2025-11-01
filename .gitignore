@@ -36,9 +36,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# prisma
-prisma/migrations/*
-!prisma/migrations/.gitkeep
+# Prisma
+# NÃO ignorar migrations - necessário para deploy
+# prisma/migrations/*
+# !prisma/migrations/.gitkeep
 
 # railway
 .railway
