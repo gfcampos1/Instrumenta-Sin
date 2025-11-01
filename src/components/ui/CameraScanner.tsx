@@ -30,6 +30,7 @@ export default function CameraScanner({
     return () => {
       stopScanner();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [facingMode]);
 
   const startScanner = async () => {
