@@ -104,7 +104,10 @@ const Sidebar: React.FC = () => {
       <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
         {filteredNavItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+          // Verificar se a rota atual corresponde exatamente ou se é uma subrota
+          // Evitar que /dashboard fique ativo quando estiver em /dashboard/mapa
+          const isActive = pathname === item.href || 
+            (pathname.startsWith(item.href + '/') && item.href !== '/dashboard');
 
           return (
             <Link

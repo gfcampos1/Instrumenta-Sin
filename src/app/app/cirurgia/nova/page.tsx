@@ -240,11 +240,15 @@ export default function NovaCirurgiaPage() {
   const nextStep = () => {
     if (validateStep(currentStep)) {
       setCurrentStep((prev) => Math.min(prev + 1, 4));
+      // Rolar suavemente para o topo ao trocar de passo
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const prevStep = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 1));
+    // Rolar suavemente para o topo ao trocar de passo
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSubmit = async () => {
@@ -468,15 +472,17 @@ export default function NovaCirurgiaPage() {
               </h2>
 
               <div className="space-y-4">
-                <Input
-                  label="Data e Hora da Cirurgia"
-                  type="datetime-local"
-                  value={formData.surgeryDate}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, surgeryDate: e.target.value }))
-                  }
-                  required
-                />
+                <div className="grid grid-cols-1 gap-4">
+                  <Input
+                    label="Data e Hora da Cirurgia"
+                    type="datetime-local"
+                    value={formData.surgeryDate}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, surgeryDate: e.target.value }))
+                    }
+                    required
+                  />
+                </div>
 
                 <Input
                   label="Tipo de Cirurgia"
