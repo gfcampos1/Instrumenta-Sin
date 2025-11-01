@@ -52,9 +52,10 @@ COPY --from=base --chown=nextjs:nodejs /app/scripts ./scripts
 # Tornar script executável
 RUN chmod +x ./scripts/init-db.sh
 
-USER nextjs
-
 EXPOSE 3000
 
+# Não rodar como nextjs user para ter permissões de escrita no Prisma
+# USER nextjs
+
 # Start com script de inicialização
-CMD ["./scripts/init-db.sh"]
+CMD ["/bin/sh", "./scripts/init-db.sh"]

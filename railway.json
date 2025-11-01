@@ -6,6 +6,7 @@
   "deploy": {
     "healthcheckPath": "/api/health",
     "healthcheckTimeout": 300,
+    "startCommand": "/bin/sh ./scripts/init-db.sh",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }

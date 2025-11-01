@@ -1,7 +1,9 @@
 #!/bin/sh
 set -e
 
-echo "🔧 Iniciando configuração do banco de dados..."
+echo "========================================="
+echo "🔧 Instrumenta-Sin - Inicializacao"
+echo "========================================="
 
 # Verificar se DATABASE_URL está configurada
 if [ -z "$DATABASE_URL" ]; then
@@ -9,26 +11,29 @@ if [ -z "$DATABASE_URL" ]; then
   exit 1
 fi
 
-echo "✅ DATABASE_URL configurada"
+echo "✅ DATABASE_URL: ${DATABASE_URL%%@*}@***"
 
 # Gerar Prisma Client
+echo ""
 echo "📦 Gerando Prisma Client..."
-npx prisma generate
+npx prisma generate || {
+  echo "❌ Erro ao gerar Prisma Client"
+  exit 1
+}
 
 # Aplicar migrations
+echo ""
 echo "🔄 Aplicando migrations..."
-npx prisma migrate deploy
+npx prisma migrate deploy || {
+  echo "❌ Erro ao aplicar migrations"
+  exit 1
+}
 
-# Verificar se as tabelas foram criadas
-echo "🔍 Verificando tabelas..."
-npx prisma db execute --stdin <<EOF
-SELECT COUNT(*) FROM information_schema.tables 
-WHERE table_schema = 'public' 
-AND table_name = 'users';
-EOF
-
-echo "✅ Banco de dados configurado com sucesso!"
+echo ""
+echo "✅ Banco de dados configurado!"
 
 # Iniciar aplicação
-echo "🚀 Iniciando aplicação..."
+echo ""
+echo "🚀 Iniciando Next.js na porta ${PORT:-3000}..."
+echo "========================================="
 exec node server.js
