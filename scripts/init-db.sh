@@ -48,11 +48,11 @@ echo "📦 Gerando Prisma Client..."
   exit 1
 }
 
-# Aplicar migrations
+# Aplicar schema ao banco (usando db push ao invés de migrate deploy)
 echo ""
-echo "🔄 Aplicando migrations..."
-./node_modules/.bin/prisma migrate deploy || {
-  echo "❌ Erro ao aplicar migrations"
+echo "🔄 Aplicando schema ao banco..."
+./node_modules/.bin/prisma db push --skip-generate --accept-data-loss || {
+  echo "❌ Erro ao aplicar schema"
   exit 1
 }
 
