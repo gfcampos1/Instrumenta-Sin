@@ -1,0 +1,364 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [postgis]
+}
+
+// ==========================================
+// ENUMS
+// ==========================================
+
+enum UserRole {
+  INSTRUMENTADOR
+  ADMIN
+  SUPERVISOR
+}
+
+enum SurgeryStatus {
+  SUCESSO
+  PROBLEMA
+  COMPLICACAO
+}
+
+enum DeviceCategory {
+  ORTOPEDIA
+  CARDIOLOGIA
+  NEUROLOGIA
+  GASTROENTEROLOGIA
+  UROLOGIA
+  OUTROS
+}
+
+enum BadgeRarity {
+  COMUM
+  RARO
+  EPICO
+  LENDARIO
+}
+
+enum NotificationType {
+  ACHIEVEMENT
+  MISSION_COMPLETE
+  LEVEL_UP
+  ALERT
+  INFO
+}
+
+enum MissionType {
+  REGISTER_SURGERIES    // Registrar X cirurgias
+  CONSECUTIVE_DAYS      // X dias consecutivos
+  UPLOAD_PHOTOS         // Enviar X fotos
+  REPORT_PROBLEMS       // Reportar X problemas
+  SPECIFIC_CATEGORY     // Usar dispositivos de categoria X
+}
+
+enum PointReason {
+  SURGERY_REGISTERED
+  PHOTO_UPLOADED
+  DETAILED_FEEDBACK
+  FIRST_OF_DAY
+  CONSECUTIVE_DAY
+  PROBLEM_REPORTED
+  MISSION_COMPLETED
+  BADGE_EARNED
+  MANUAL_ADJUSTMENT
+}
+
+// ==========================================
+// CORE ENTITIES
+// ==========================================
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  passwordHash  String   @map("password_hash")
+  role          UserRole @default(INSTRUMENTADOR)
+  
+  // Perfil
+  name          String
+  phone         String?
+  avatarUrl     String?  @map("avatar_url")
+  active        Boolean  @default(true)
+  
+  // Gamificação
+  points        Int      @default(0)
+  level         Int      @default(1)
+  
+  // Timestamps
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  lastLoginAt   DateTime? @map("last_login_at")
+  
+  // Relacionamentos
+  surgeries           Surgery[]
+  locations           Location[]
+  achievements        Achievement[]
+  notifications       Notification[]
+  pointTransactions   PointTransaction[]
+  missionProgress     MissionProgress[]
+  
+  @@map("users")
+  @@index([email])
+  @@index([role])
+  @@index([active])
+  @@index([points])
+}
+
+model Device {
+  id             String          @id @default(uuid())
+  barcode        String          @unique
+  name           String
+  category       DeviceCategory
+  manufacturer   String
+  model          String
+  lotNumber      String?         @map("lot_number")
+  expirationDate DateTime?       @map("expiration_date")
+  description    String?
+  active         Boolean         @default(true)
+  
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+  
+  surgeries      Surgery[]
+  
+  @@map("devices")
+  @@index([barcode])
+  @@index([category])
+  @@index([active])
+}
+
+model Surgery {
+  id              String         @id @default(uuid())
+  userId          String         @map("user_id")
+  deviceId        String         @map("device_id")
+  
+  // Dados da cirurgia
+  surgeryDate     DateTime       @map("surgery_date")
+  surgeryType     String         @map("surgery_type")
+  hospitalName    String         @map("hospital_name")
+  hospitalCNPJ    String?        @map("hospital_cnpj")
+  
+  // Localização
+  latitude        Float
+  longitude       Float
+  locationAccuracy Float?        @map("location_accuracy")
+  city            String?
+  state           String?
+  
+  // Avaliação
+  status          SurgeryStatus
+  doctorName      String?        @map("doctor_name")
+  doctorConduct   String         @map("doctor_conduct") @db.Text
+  devicePerformance String       @map("device_performance") @db.Text
+  problemsReported String?       @map("problems_reported") @db.Text
+  notes           String?        @db.Text
+  
+  // Rating (1-5)
+  deviceRating    Int?           @map("device_rating")
+  doctorRating    Int?           @map("doctor_rating")
+  
+  // Evidências
+  photos          String[]       // Array de URLs Cloudinary
+  
+  // Metadata
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+  
+  // Relacionamentos
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  device          Device         @relation(fields: [deviceId], references: [id], onDelete: Restrict)
+  
+  @@map("surgeries")
+  @@index([userId])
+  @@index([deviceId])
+  @@index([surgeryDate])
+  @@index([status])
+  @@index([latitude, longitude])
+  @@index([createdAt])
+}
+
+model Location {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  latitude  Float
+  longitude Float
+  accuracy  Float?
+  timestamp DateTime @default(now())
+  
+  // PostGIS - coluna geográfica será adicionada via migration raw SQL
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("locations")
+  @@index([userId])
+  @@index([timestamp])
+  @@index([latitude, longitude])
+}
+
+// ==========================================
+// GAMIFICAÇÃO
+// ==========================================
+
+model Badge {
+  id              String        @id @default(uuid())
+  name            String        @unique
+  description     String
+  iconUrl         String        @map("icon_url")
+  pointsRequired  Int           @map("points_required")
+  category        String
+  rarity          BadgeRarity   @default(COMUM)
+  order           Int           @default(0)
+  active          Boolean       @default(true)
+  
+  createdAt       DateTime      @default(now()) @map("created_at")
+  
+  achievements    Achievement[]
+  
+  @@map("badges")
+  @@index([rarity])
+  @@index([pointsRequired])
+}
+
+model Achievement {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  badgeId   String   @map("badge_id")
+  earnedAt  DateTime @default(now()) @map("earned_at")
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, badgeId])
+  @@map("achievements")
+  @@index([userId])
+  @@index([badgeId])
+  @@index([earnedAt])
+}
+
+model Mission {
+  id              String          @id @default(uuid())
+  title           String
+  description     String
+  pointsReward    Int             @map("points_reward")
+  targetCount     Int             @map("target_count")
+  missionType     MissionType     @map("mission_type")
+  category        String?
+  startDate       DateTime        @map("start_date")
+  endDate         DateTime        @map("end_date")
+  active          Boolean         @default(true)
+  
+  createdAt       DateTime        @default(now()) @map("created_at")
+  
+  progress        MissionProgress[]
+  
+  @@map("missions")
+  @@index([active])
+  @@index([startDate, endDate])
+  @@index([missionType])
+}
+
+model MissionProgress {
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  missionId     String   @map("mission_id")
+  currentCount  Int      @default(0) @map("current_count")
+  completed     Boolean  @default(false)
+  completedAt   DateTime? @map("completed_at")
+  
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mission       Mission  @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, missionId])
+  @@map("mission_progress")
+  @@index([userId])
+  @@index([missionId])
+  @@index([completed])
+}
+
+model PointTransaction {
+  id            String      @id @default(uuid())
+  userId        String      @map("user_id")
+  points        Int
+  reason        PointReason
+  referenceType String?     @map("reference_type")
+  referenceId   String?     @map("reference_id")
+  description   String?
+  
+  createdAt     DateTime    @default(now()) @map("created_at")
+  
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("point_transactions")
+  @@index([userId])
+  @@index([createdAt])
+  @@index([reason])
+}
+
+// ==========================================
+// NOTIFICAÇÕES E COMUNICAÇÃO
+// ==========================================
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String           @map("user_id")
+  title     String
+  message   String
+  type      NotificationType
+  read      Boolean          @default(false)
+  data      Json?
+  
+  createdAt DateTime         @default(now()) @map("created_at")
+  readAt    DateTime?        @map("read_at")
+  
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@map("notifications")
+  @@index([userId])
+  @@index([read])
+  @@index([createdAt])
+}
+
+// ==========================================
+// CONFIGURAÇÕES E METADATA
+// ==========================================
+
+model SystemConfig {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json
+  description String?
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  @@map("system_config")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  userId    String?  @map("user_id")
+  action    String
+  entity    String
+  entityId  String?  @map("entity_id")
+  changes   Json?
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  @@map("audit_logs")
+  @@index([userId])
+  @@index([entity, entityId])
+  @@index([createdAt])
+}
