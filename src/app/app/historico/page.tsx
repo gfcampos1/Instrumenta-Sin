@@ -19,7 +19,7 @@ import SurgeryCard from '@/components/ui/SurgeryCard';
 import EmptyState from '@/components/ui/EmptyState';
 import Modal from '@/components/ui/Modal';
 import StatusBadge from '@/components/ui/StatusBadge';
-import Rating Stars from '@/components/ui/RatingStars';
+import RatingStars from '@/components/ui/RatingStars';
 
 interface Surgery {
   id: string;
@@ -201,15 +201,17 @@ export default function HistoricoPage() {
                 : 'Você ainda não registrou nenhuma cirurgia'
             }
             action={
-              searchTerm || selectedStatus !== 'ALL'
-                ? {
-                    label: 'Limpar filtros',
-                    onClick: () => {
-                      setSearchTerm('');
-                      setSelectedStatus('ALL');
-                    },
-                  }
-                : undefined
+              searchTerm || selectedStatus !== 'ALL' ? (
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    setSearchTerm('');
+                    setSelectedStatus('ALL');
+                  }}
+                >
+                  Limpar filtros
+                </Button>
+              ) : undefined
             }
           />
         ) : (
@@ -218,7 +220,16 @@ export default function HistoricoPage() {
             {filteredSurgeries.map((surgery) => (
               <SurgeryCard
                 key={surgery.id}
-                {...surgery}
+                id={surgery.id}
+                hospitalName={surgery.hospitalName}
+                surgeryType={surgery.surgeryType}
+                surgeryDate={surgery.surgeryDate}
+                status={surgery.status}
+                deviceName={surgery.device.name}
+                deviceCategory={surgery.device.category}
+                city={surgery.city}
+                state={surgery.state}
+                photos={surgery.photos}
                 onClick={() => setSelectedSurgery(surgery)}
               />
             ))}

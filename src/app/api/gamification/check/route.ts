@@ -22,7 +22,13 @@ export async function POST(request: NextRequest) {
       where: { id: session.user.id },
       include: {
         achievements: { select: { badgeId: true } },
-        surgeries: true,
+        surgeries: {
+          include: {
+            device: {
+              select: { category: true }
+            }
+          }
+        },
       },
     });
 
@@ -152,7 +158,7 @@ export async function POST(request: NextRequest) {
         case 'SPECIFIC_CATEGORY':
           if (mission.category) {
             currentCount = user.surgeries.filter(
-              (s) => s.device && s.device === mission.category
+              (s) => s.device && s.device.category === mission.category
             ).length;
           }
           break;
