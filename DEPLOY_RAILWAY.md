@@ -17,30 +17,36 @@
 2. Selecione **"Database"** → **"Add PostgreSQL"**
 3. Railway criará automaticamente a `DATABASE_URL`
 
-### 4. Configure as Variáveis de Ambiente
+**4. Configure as Variáveis de Ambiente:**
 No painel do Railway, vá em **Variables** e adicione:
 
 ```bash
-NEXTAUTH_SECRET=sua-chave-super-secreta-aqui-32-chars
-NEXTAUTH_URL=${{RAILWAY_PUBLIC_DOMAIN}}
-NEXT_PUBLIC_APP_URL=${{RAILWAY_PUBLIC_DOMAIN}}
+NEXTAUTH_SECRET=4aux+JD+52ZTk6j6viXvjOGskjtCgcGY7FVaFdUa4oQ=
+NEXTAUTH_URL=https://${{RAILWAY_STATIC_URL}}
+NEXT_PUBLIC_APP_URL=https://${{RAILWAY_STATIC_URL}}
 NODE_ENV=production
 ```
 
-**⚠️ IMPORTANTE:** Para gerar o `NEXTAUTH_SECRET`:
+**⚠️ IMPORTANTE:** 
+- As variáveis `${{RAILWAY_STATIC_URL}}` serão substituídas automaticamente
+- Você pode gerar um novo `NEXTAUTH_SECRET` com:
 ```bash
-# Windows PowerShell
-[Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Minimum 0 -Maximum 256 }))
+openssl rand -base64 32
 ```
 
-### 5. Execute as Migrations
-1. No Railway, vá em **"Deployments"**
-2. Aguarde o build terminar
-3. Clique em **"Settings"** → **"Deploy"**
-4. Execute no terminal local para aplicar migrations:
+### 5. Aguarde o Build Completar
+- O Railway irá automaticamente:
+  - ✅ Instalar dependências
+  - ✅ Gerar Prisma Client
+  - ✅ Build do Next.js
+  - ✅ Executar migrations na primeira inicialização
+  - ✅ Iniciar o servidor
+
+### 6. Execute o Seed (Dados Iniciais)
+Após o primeiro deploy bem-sucedido:
 
 ```powershell
-# Instale Railway CLI
+# Instale Railway CLI (se ainda não tiver)
 npm install -g @railway/cli
 
 # Login
@@ -49,16 +55,13 @@ railway login
 # Link ao projeto
 railway link
 
-# Execute migrations
-railway run npx prisma migrate deploy
-
-# Execute seed (dados iniciais)
+# Execute seed (apenas uma vez)
 railway run npx prisma db seed
 ```
 
-### 6. Acesse o App
+### 7. Acesse o App
 - Clique em **"Settings"** → **"Generate Domain"**
-- Seu app estará em: `https://seu-app.up.railway.app`
+- Seu app estará em: `https://instrumenta-sin.up.railway.app`
 
 ---
 
