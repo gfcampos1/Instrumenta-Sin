@@ -43,10 +43,14 @@ RUN apk add --no-cache openssl bash
 COPY --from=base --chown=nextjs:nodejs /app/public ./public
 COPY --from=base --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=base --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=base --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=base /app/prisma ./prisma
 COPY --from=base --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=base --chown=nextjs:nodejs /app/scripts ./scripts
 COPY --from=base --chown=nextjs:nodejs /app/package.json ./package.json
+
+# Corrigir permissões do Prisma (depois da cópia)
+RUN chmod -R 755 ./prisma/migrations/ && \
+    find ./prisma/migrations/ -type f -name "*.sql" -exec chmod 644 {} \;
 
 # Tornar script executável
 RUN chmod +x ./scripts/init-db.sh
