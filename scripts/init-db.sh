@@ -13,33 +13,6 @@ fi
 
 echo "✅ DATABASE_URL: ${DATABASE_URL%%@*}@***"
 
-# Debug: listar conteúdo da pasta migrations
-echo ""
-echo "🔍 Debug: Listando migrations..."
-ls -la ./prisma/migrations/ || echo "Pasta migrations não encontrada"
-if [ -d "./prisma/migrations/20241031_init" ]; then
-  echo "📁 Conteúdo de 20241031_init:"
-  ls -la ./prisma/migrations/20241031_init/
-else
-  echo "❌ Diretório 20241031_init não existe"
-fi
-
-# Corrigir permissões do diretório migrations
-echo ""
-echo "🔧 Corrigindo permissões..."
-chmod -R 755 ./prisma/migrations/
-find ./prisma/migrations/ -type f -name "*.sql" -exec chmod 644 {} \;
-
-# Verificar se migration.sql está acessível
-echo ""
-echo "🔍 Verificando migration.sql..."
-if [ -f "./prisma/migrations/20241031_init/migration.sql" ]; then
-  echo "✅ migration.sql encontrado ($(wc -c < ./prisma/migrations/20241031_init/migration.sql) bytes)"
-  head -n 3 ./prisma/migrations/20241031_init/migration.sql
-else
-  echo "❌ migration.sql NÃO encontrado!"
-fi
-
 # Gerar Prisma Client
 echo ""
 echo "📦 Gerando Prisma Client..."
