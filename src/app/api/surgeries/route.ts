@@ -24,7 +24,7 @@ const createSurgerySchema = z.object({
   notes: z.string().optional(),
   deviceRating: z.number().min(1).max(5).optional(),
   doctorRating: z.number().min(1).max(5).optional(),
-  photos: z.array(z.string().url()).min(1).max(10),
+  photos: z.array(z.string().url()).max(10).optional().default([]),
 });
 
 // GET - Listar cirurgias do usuário
