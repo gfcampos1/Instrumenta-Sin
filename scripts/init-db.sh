@@ -16,7 +16,7 @@ echo "✅ DATABASE_URL: ${DATABASE_URL%%@*}@***"
 # Gerar Prisma Client
 echo ""
 echo "📦 Gerando Prisma Client..."
-npx prisma generate || {
+./node_modules/.bin/prisma generate || {
   echo "❌ Erro ao gerar Prisma Client"
   exit 1
 }
@@ -24,7 +24,7 @@ npx prisma generate || {
 # Aplicar migrations
 echo ""
 echo "🔄 Aplicando migrations..."
-npx prisma migrate deploy || {
+./node_modules/.bin/prisma migrate deploy || {
   echo "❌ Erro ao aplicar migrations"
   exit 1
 }

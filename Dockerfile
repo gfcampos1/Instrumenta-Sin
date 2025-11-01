@@ -44,10 +44,9 @@ COPY --from=base --chown=nextjs:nodejs /app/public ./public
 COPY --from=base --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=base --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=base --chown=nextjs:nodejs /app/prisma ./prisma
-COPY --from=base --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=base --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
-COPY --from=base --chown=nextjs:nodejs /app/node_modules/prisma ./node_modules/prisma
+COPY --from=base --chown=nextjs:nodejs /app/node_modules ./node_modules
 COPY --from=base --chown=nextjs:nodejs /app/scripts ./scripts
+COPY --from=base --chown=nextjs:nodejs /app/package.json ./package.json
 
 # Tornar script executável
 RUN chmod +x ./scripts/init-db.sh
