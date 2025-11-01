@@ -16,6 +16,9 @@ export const metadata: Metadata = {
     statusBarStyle: 'default',
     title: 'Instrumenta-Sin',
   },
+  other: {
+    'mobile-web-app-capable': 'yes',
+  },
 };
 
 export const viewport = {
