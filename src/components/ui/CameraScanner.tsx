@@ -44,27 +44,9 @@ export default function CameraScanner({
           fps: 10,
           qrbox: { width: 280, height: 200 },
           aspectRatio: 1.777778, // 16:9
-          formatsToSupport: [
-            // Códigos de barras 1D (lineares)
-            0,  // CODE_128
-            1,  // CODE_39
-            2,  // CODE_93
-            3,  // CODABAR
-            4,  // DATA_MATRIX
-            5,  // MAXICODE
-            6,  // ITF
-            7,  // EAN_13
-            8,  // EAN_8
-            9,  // UPC_A
-            10, // UPC_E
-            11, // UPC_EAN_EXTENSION
-            12, // RSS_14
-            13, // RSS_EXPANDED
-            // Códigos 2D
-            14, // QR_CODE
-            15, // AZTEC
-            16, // PDF_417
-          ]
+          // A biblioteca detecta automaticamente todos os formatos suportados:
+          // Códigos 1D: CODE_128, CODE_39, EAN_13, UPC_A, etc
+          // Códigos 2D: QR Code, Data Matrix, PDF_417, Aztec
         },
         (decodedText) => {
           // Sucesso na leitura

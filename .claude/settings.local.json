@@ -14,7 +14,9 @@
       "Bash(npm run build:*)",
       "Bash(cat:*)",
       "Bash(npm cache clean:*)",
-      "Bash(NODE_ENV=development npm install:*)"
+      "Bash(NODE_ENV=development npm install:*)",
+      "Bash(git push:*)",
+      "Bash(npm ls:*)"
     ],
     "deny": [],
     "ask": []
