@@ -7,7 +7,10 @@
       "Bash(git commit -m \"$(cat <<''EOF''\nfix: usar db push ao invés de migrate deploy\n\nSubstitui prisma migrate deploy por prisma db push para contornar\no erro P3015. O db push é mais adequado para deploys em produção\nquando não há necessidade de manter histórico de migrations.\n\nMudanças:\n- Substitui migrate deploy por db push --skip-generate --accept-data-loss\n- Mantém verificações de permissões e debug\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
       "Bash(git commit -m \"$(cat <<''EOF''\nfix: remover extensão PostGIS do schema\n\nRemove a extensão PostGIS temporariamente pois o PostgreSQL do\nRailway não tem esta extensão instalada. A extensão será\nadicionada futuramente quando necessária.\n\nMudanças:\n- Comenta a linha extensions = [postgis] no datasource\n- Comenta previewFeatures = [\"postgresqlExtensions\"]\n- Adiciona comentários explicando a remoção temporária\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
       "Bash(git reset:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(ls:*)",
+      "Bash(npm install:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": [],
     "ask": []
