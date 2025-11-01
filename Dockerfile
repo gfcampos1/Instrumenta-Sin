@@ -28,25 +28,28 @@ RUN npm run build
 FROM node:20-alpine AS runner
 WORKDIR /app
 
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV HOSTNAME="0.0.0.0"
+ENV PORT=3000
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
+# Instalar OpenSSL para Prisma
+RUN apk add --no-cache openssl
+
 # Copiar arquivos necessários
-COPY --from=base /app/public ./public
-COPY --from=base /app/.next/standalone ./
-COPY --from=base /app/.next/static ./.next/static
-COPY --from=base /app/prisma ./prisma
-COPY --from=base /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=base --chown=nextjs:nodejs /app/public ./public
+COPY --from=base --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=base --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=base --chown=nextjs:nodejs /app/prisma ./prisma
+COPY --from=base --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=base --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
 
 USER nextjs
 
 EXPOSE 3000
 
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
-
-# Start script com migrations
-CMD npx prisma migrate deploy && node server.js
+# Start com migrations
+CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]
