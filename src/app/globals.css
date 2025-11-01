@@ -14,9 +14,15 @@
   --gradient-sintegra-primary: linear-gradient(135deg, #4DB5E8 0%, #2B5C9E 100%);
   --gradient-sintegra-light: linear-gradient(135deg, #c9edfb 0%, #4DB5E8 100%);
 
-  /* Cores do sistema */
+  /* Cores do sistema - Light mode */
   --foreground-rgb: 61, 61, 61;
   --background-rgb: 249, 249, 249;
+}
+
+.dark {
+  /* Cores do sistema - Dark mode */
+  --foreground-rgb: 255, 255, 255;
+  --background-rgb: 23, 23, 23;
 }
 
 body {
