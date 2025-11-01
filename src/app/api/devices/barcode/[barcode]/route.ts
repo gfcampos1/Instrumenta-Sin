@@ -37,7 +37,7 @@ export async function GET(
       );
     }
 
-    return NextResponse.json(device);
+    return NextResponse.json({ success: true, data: device });
   } catch (error) {
     console.error('Erro ao buscar dispositivo por barcode:', error);
     return NextResponse.json(

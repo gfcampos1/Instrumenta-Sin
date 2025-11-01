@@ -171,6 +171,12 @@ export default function NovaCirurgiaPage() {
       const result = await response.json();
       const device = result.data;
 
+      if (!device || !device.id) {
+        toast.error('Dados do dispositivo inválidos');
+        setFormData((prev) => ({ ...prev, device: null, deviceId: '' }));
+        return;
+      }
+
       setFormData((prev) => ({
         ...prev,
         device,
@@ -181,6 +187,7 @@ export default function NovaCirurgiaPage() {
     } catch (error) {
       console.error('Erro ao buscar dispositivo:', error);
       toast.error('Erro ao buscar dispositivo');
+      setFormData((prev) => ({ ...prev, device: null, deviceId: '' }));
     } finally {
       setSearchingDevice(false);
     }
