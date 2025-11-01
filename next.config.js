@@ -15,10 +15,6 @@ const nextConfig = {
     ],
   },
 
-  experimental: {
-    optimizeCss: true,
-  },
-
   // Webpack config para ignorar warnings do Prisma
   webpack: (config, { isServer }) => {
     if (isServer) {

@@ -9,12 +9,15 @@ export const metadata: Metadata = {
   title: 'Instrumenta-Sin - Monitoramento de Dispositivos Médicos',
   description: 'Sistema de monitoramento e gamificação para instrumentadores em campo',
   manifest: '/manifest.json',
-  themeColor: '#4DB5E8',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
     title: 'Instrumenta-Sin',
   },
+};
+
+export const viewport = {
+  themeColor: '#4DB5E8',
 };
 
 export default function RootLayout({
