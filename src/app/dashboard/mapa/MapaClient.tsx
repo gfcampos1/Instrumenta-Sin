@@ -104,65 +104,73 @@ export default function MapaClient({ surgeries }: MapaClientProps) {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card
-          className="cursor-pointer hover:shadow-lg transition-shadow"
+        <div
           onClick={() => setSelectedStatus('Todos')}
+          className="cursor-pointer"
         >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-secondary-600 font-medium">Total</p>
-              <p className="text-3xl font-bold text-secondary-900 mt-1">
-                {statusCounts.total}
-              </p>
+          <Card className="hover:shadow-lg transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-secondary-600 font-medium">Total</p>
+                <p className="text-3xl font-bold text-secondary-900 mt-1">
+                  {statusCounts.total}
+                </p>
+              </div>
+              <MapPin className="text-secondary-400" size={32} />
             </div>
-            <MapPin className="text-secondary-400" size={32} />
-          </div>
-        </Card>
+          </Card>
+        </div>
 
-        <Card
-          className="cursor-pointer hover:shadow-lg transition-shadow"
+        <div
           onClick={() => setSelectedStatus('SUCESSO')}
+          className="cursor-pointer"
         >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-secondary-600 font-medium">Sucesso</p>
-              <p className="text-3xl font-bold text-status-green mt-1">
-                {statusCounts.sucesso}
-              </p>
+          <Card className="hover:shadow-lg transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-secondary-600 font-medium">Sucesso</p>
+                <p className="text-3xl font-bold text-status-green mt-1">
+                  {statusCounts.sucesso}
+                </p>
+              </div>
+              <div className="w-4 h-4 rounded-full bg-status-green"></div>
             </div>
-            <div className="w-4 h-4 rounded-full bg-status-green"></div>
-          </div>
-        </Card>
+          </Card>
+        </div>
 
-        <Card
-          className="cursor-pointer hover:shadow-lg transition-shadow"
+        <div
           onClick={() => setSelectedStatus('PROBLEMA')}
+          className="cursor-pointer"
         >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-secondary-600 font-medium">Problema</p>
-              <p className="text-3xl font-bold text-status-yellow mt-1">
-                {statusCounts.problema}
-              </p>
+          <Card className="hover:shadow-lg transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-secondary-600 font-medium">Problema</p>
+                <p className="text-3xl font-bold text-status-yellow mt-1">
+                  {statusCounts.problema}
+                </p>
+              </div>
+              <div className="w-4 h-4 rounded-full bg-status-yellow"></div>
             </div>
-            <div className="w-4 h-4 rounded-full bg-status-yellow"></div>
-          </div>
-        </Card>
+          </Card>
+        </div>
 
-        <Card
-          className="cursor-pointer hover:shadow-lg transition-shadow"
+        <div
           onClick={() => setSelectedStatus('COMPLICACAO')}
+          className="cursor-pointer"
         >
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-secondary-600 font-medium">Complicação</p>
-              <p className="text-3xl font-bold text-status-red mt-1">
-                {statusCounts.complicacao}
-              </p>
+          <Card className="hover:shadow-lg transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-secondary-600 font-medium">Complicação</p>
+                <p className="text-3xl font-bold text-status-red mt-1">
+                  {statusCounts.complicacao}
+                </p>
+              </div>
+              <div className="w-4 h-4 rounded-full bg-status-red"></div>
             </div>
-            <div className="w-4 h-4 rounded-full bg-status-red"></div>
-          </div>
-        </Card>
+          </Card>
+        </div>
       </div>
 
       {/* Filter Info */}

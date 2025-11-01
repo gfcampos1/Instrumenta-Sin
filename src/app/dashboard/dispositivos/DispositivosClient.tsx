@@ -120,16 +120,18 @@ export default function DispositivosClient({ devices }: DispositivosClientProps)
       {/* Stats by Category */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
         {devicesByCategory.map(({ category, count }) => (
-          <Card
+          <div
             key={category}
-            className="text-center cursor-pointer hover:shadow-lg transition-shadow"
             onClick={() => setSelectedCategory(category)}
+            className="cursor-pointer"
           >
-            <div className={`inline-block px-3 py-1 rounded-lg text-xs font-semibold mb-2 ${CATEGORY_COLORS[category]}`}>
-              {category}
-            </div>
-            <p className="text-2xl font-bold text-secondary-900">{count}</p>
-          </Card>
+            <Card className="text-center hover:shadow-lg transition-shadow">
+              <div className={`inline-block px-3 py-1 rounded-lg text-xs font-semibold mb-2 ${CATEGORY_COLORS[category]}`}>
+                {category}
+              </div>
+              <p className="text-2xl font-bold text-secondary-900">{count}</p>
+            </Card>
+          </div>
         ))}
       </div>
 
