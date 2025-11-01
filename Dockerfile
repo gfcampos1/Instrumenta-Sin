@@ -37,7 +37,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 # Instalar OpenSSL para Prisma
-RUN apk add --no-cache openssl
+RUN apk add --no-cache openssl bash
 
 # Copiar arquivos necessários
 COPY --from=base --chown=nextjs:nodejs /app/public ./public
@@ -46,10 +46,15 @@ COPY --from=base --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=base --chown=nextjs:nodejs /app/prisma ./prisma
 COPY --from=base --chown=nextjs:nodejs /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=base --chown=nextjs:nodejs /app/node_modules/@prisma ./node_modules/@prisma
+COPY --from=base --chown=nextjs:nodejs /app/node_modules/prisma ./node_modules/prisma
+COPY --from=base --chown=nextjs:nodejs /app/scripts ./scripts
+
+# Tornar script executável
+RUN chmod +x ./scripts/init-db.sh
 
 USER nextjs
 
 EXPOSE 3000
 
-# Start com migrations
-CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]
+# Start com script de inicialização
+CMD ["./scripts/init-db.sh"]
