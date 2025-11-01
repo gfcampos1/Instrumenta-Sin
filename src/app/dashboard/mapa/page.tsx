@@ -8,12 +8,8 @@ export default async function MapaPage() {
 
   if (!session) return null;
 
-  // Buscar cirurgias com localização
+  // Buscar todas as cirurgias (latitude e longitude são obrigatórios no schema)
   const surgeries = await prisma.surgery.findMany({
-    where: {
-      latitude: { not: null },
-      longitude: { not: null }
-    },
     orderBy: { createdAt: 'desc' },
     include: {
       user: { select: { name: true } },
