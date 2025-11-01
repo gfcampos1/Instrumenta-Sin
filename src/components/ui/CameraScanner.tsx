@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
-import { Camera, X, Keyboard } from 'lucide-react';
+import { Camera, X, Keyboard, SwitchCamera } from 'lucide-react';
 import Button from './Button';
 import Input from './Input';
 
@@ -22,6 +22,7 @@ export default function CameraScanner({
   const [error, setError] = useState<string | null>(null);
   const [showManualInput, setShowManualInput] = useState(false);
   const [manualCode, setManualCode] = useState('');
+  const [facingMode, setFacingMode] = useState<'environment' | 'user'>('environment');
 
   useEffect(() => {
     startScanner();
@@ -29,7 +30,7 @@ export default function CameraScanner({
     return () => {
       stopScanner();
     };
-  }, []);
+  }, [facingMode]);
 
   const startScanner = async () => {
     try {
@@ -38,14 +39,40 @@ export default function CameraScanner({
       scannerRef.current = scanner;
 
       await scanner.start(
-        { facingMode: 'environment' }, // Câmera traseira
+        { facingMode }, // Câmera selecionada
         {
           fps: 10,
-          qrbox: { width: 250, height: 250 },
-          aspectRatio: 1.0
+          qrbox: { width: 280, height: 200 },
+          aspectRatio: 1.777778, // 16:9
+          formatsToSupport: [
+            // Códigos de barras 1D (lineares)
+            0,  // CODE_128
+            1,  // CODE_39
+            2,  // CODE_93
+            3,  // CODABAR
+            4,  // DATA_MATRIX
+            5,  // MAXICODE
+            6,  // ITF
+            7,  // EAN_13
+            8,  // EAN_8
+            9,  // UPC_A
+            10, // UPC_E
+            11, // UPC_EAN_EXTENSION
+            12, // RSS_14
+            13, // RSS_EXPANDED
+            // Códigos 2D
+            14, // QR_CODE
+            15, // AZTEC
+            16, // PDF_417
+          ]
         },
         (decodedText) => {
           // Sucesso na leitura
+          // Vibrar (se disponível)
+          if ('vibrate' in navigator) {
+            navigator.vibrate(200);
+          }
+
           stopScanner();
           onScanSuccess(decodedText);
         },
@@ -82,21 +109,37 @@ export default function CameraScanner({
     }
   };
 
+  const toggleCamera = async () => {
+    await stopScanner();
+    setFacingMode((prev) => (prev === 'environment' ? 'user' : 'environment'));
+  };
+
   return (
     <div className="fixed inset-0 z-50 bg-black">
       {/* Header */}
       <div className="absolute top-0 left-0 right-0 z-10 bg-gradient-to-b from-black/80 to-transparent p-4">
         <div className="flex items-center justify-between text-white">
           <h2 className="text-lg font-bold">Escanear Código de Barras</h2>
-          {onClose && (
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-white/20 rounded-lg transition-colors"
-              aria-label="Fechar scanner"
-            >
-              <X size={24} />
-            </button>
-          )}
+          <div className="flex items-center gap-2">
+            {isScanning && (
+              <button
+                onClick={toggleCamera}
+                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                aria-label="Alternar câmera"
+              >
+                <SwitchCamera size={24} />
+              </button>
+            )}
+            {onClose && (
+              <button
+                onClick={onClose}
+                className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                aria-label="Fechar scanner"
+              >
+                <X size={24} />
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
@@ -165,8 +208,14 @@ export default function CameraScanner({
       {/* Instructions */}
       <div className="absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black/80 to-transparent p-6">
         <div className="text-center text-white space-y-3">
-          <p className="text-sm">
-            Posicione o código de barras dentro do quadro
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <p className="text-sm font-medium">
+              Escaneando...
+            </p>
+          </div>
+          <p className="text-xs opacity-80">
+            Aceita códigos de barras e QR codes
           </p>
 
           {allowManualInput && !showManualInput && (
