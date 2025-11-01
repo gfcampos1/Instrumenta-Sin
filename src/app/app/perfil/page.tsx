@@ -27,6 +27,7 @@ import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { useTheme } from '@/hooks/useTheme';
 import Image from 'next/image';
+import BottomNav from '@/components/mobile/BottomNav';
 
 export default function PerfilPage() {
   const router = useRouter();
@@ -366,6 +367,9 @@ export default function PerfilPage() {
           </Button>
         </div>
       </div>
+
+      {/* Bottom Navigation */}
+      <BottomNav />
     </div>
   );
 }

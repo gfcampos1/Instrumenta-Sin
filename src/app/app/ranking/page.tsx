@@ -8,6 +8,7 @@ import Link from 'next/link';
 import BadgeCard from '@/components/ui/BadgeCard';
 import MissionCard from '@/components/ui/MissionCard';
 import EmptyState from '@/components/ui/EmptyState';
+import BottomNav from '@/components/mobile/BottomNav';
 
 type Tab = 'ranking' | 'badges' | 'missions';
 
@@ -303,6 +304,9 @@ export default function RankingPage() {
           </>
         )}
       </div>
+
+      {/* Bottom Navigation */}
+      <BottomNav />
     </div>
   );
 }

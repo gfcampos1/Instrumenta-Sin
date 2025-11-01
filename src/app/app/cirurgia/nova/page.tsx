@@ -19,6 +19,7 @@ import Input from '@/components/ui/Input';
 import RatingStars from '@/components/ui/RatingStars';
 import PhotoUpload from '@/components/ui/PhotoUpload';
 import Link from 'next/link';
+import BottomNav from '@/components/mobile/BottomNav';
 
 interface Device {
   id: string;
@@ -758,6 +759,9 @@ export default function NovaCirurgiaPage() {
           </div>
         </div>
       </div>
+
+      {/* Bottom Navigation */}
+      <BottomNav />
     </div>
   );
 }

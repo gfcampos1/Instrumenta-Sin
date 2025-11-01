@@ -2,6 +2,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
+import BottomNav from '@/components/mobile/BottomNav';
 
 export default async function AppPage() {
   const session = await getServerSession(authOptions);
@@ -34,7 +35,7 @@ export default async function AppPage() {
   ]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
       <header className="bg-gradient-sintegra text-white p-4 shadow-lg">
         <div className="container mx-auto">
@@ -149,26 +150,7 @@ export default async function AppPage() {
       </div>
 
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-3">
-        <div className="flex justify-around items-center max-w-md mx-auto">
-          <Link href="/app" className="flex flex-col items-center text-primary-600">
-            <span className="text-2xl mb-1">🏠</span>
-            <span className="text-xs font-medium">Início</span>
-          </Link>
-          <Link href="/app/cirurgia/nova" className="flex flex-col items-center text-gray-600 hover:text-primary-600">
-            <span className="text-2xl mb-1">➕</span>
-            <span className="text-xs font-medium">Nova</span>
-          </Link>
-          <Link href="/app/historico" className="flex flex-col items-center text-gray-600 hover:text-primary-600">
-            <span className="text-2xl mb-1">📋</span>
-            <span className="text-xs font-medium">Histórico</span>
-          </Link>
-          <Link href="/app/perfil" className="flex flex-col items-center text-gray-600 hover:text-primary-600">
-            <span className="text-2xl mb-1">👤</span>
-            <span className="text-xs font-medium">Perfil</span>
-          </Link>
-        </div>
-      </nav>
+      <BottomNav />
     </div>
   );
 }

@@ -20,6 +20,7 @@ import EmptyState from '@/components/ui/EmptyState';
 import Modal from '@/components/ui/Modal';
 import StatusBadge from '@/components/ui/StatusBadge';
 import RatingStars from '@/components/ui/RatingStars';
+import BottomNav from '@/components/mobile/BottomNav';
 
 interface Surgery {
   id: string;
@@ -380,6 +381,9 @@ export default function HistoricoPage() {
           </div>
         </Modal>
       )}
+
+      {/* Bottom Navigation */}
+      <BottomNav />
     </div>
   );
 }
