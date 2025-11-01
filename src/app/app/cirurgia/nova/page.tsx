@@ -229,10 +229,7 @@ export default function NovaCirurgiaPage() {
         return true;
 
       case 4:
-        if (formData.photos.length < 1) {
-          toast.error('Adicione pelo menos 1 foto');
-          return false;
-        }
+        // Fotos são opcionais
         return true;
 
       default:
@@ -711,8 +708,11 @@ export default function NovaCirurgiaPage() {
           {currentStep === 4 && (
             <div className="space-y-6">
               <h2 className="text-xl font-bold text-secondary-900">
-                Evidências Fotográficas
+                Evidências Fotográficas (Opcional)
               </h2>
+              <p className="text-sm text-secondary-600">
+                Adicione fotos da cirurgia para complementar o registro
+              </p>
 
               <PhotoUpload
                 photos={formData.photos}
