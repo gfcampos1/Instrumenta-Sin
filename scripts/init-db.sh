@@ -29,6 +29,13 @@ echo "🔄 Aplicando schema ao banco..."
   exit 1
 }
 
+# Executar seed (popular banco de dados)
+echo ""
+echo "🌱 Populando banco de dados..."
+node ./prisma/seed.js || {
+  echo "⚠️  Aviso: Erro ao executar seed (pode já estar populado)"
+}
+
 echo ""
 echo "✅ Banco de dados configurado!"
 
