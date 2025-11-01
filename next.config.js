@@ -19,6 +19,16 @@ const nextConfig = {
     optimizeCss: true,
   },
 
+  // Webpack config para ignorar warnings do Prisma
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals.push({
+        '@prisma/client': 'commonjs @prisma/client',
+      });
+    }
+    return config;
+  },
+
   // PWA Configuration
   async headers() {
     return [
