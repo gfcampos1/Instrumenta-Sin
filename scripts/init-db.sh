@@ -13,6 +13,17 @@ fi
 
 echo "✅ DATABASE_URL: ${DATABASE_URL%%@*}@***"
 
+# Debug: listar conteúdo da pasta migrations
+echo ""
+echo "🔍 Debug: Listando migrations..."
+ls -la ./prisma/migrations/ || echo "Pasta migrations não encontrada"
+if [ -d "./prisma/migrations/20241031_init" ]; then
+  echo "📁 Conteúdo de 20241031_init:"
+  ls -la ./prisma/migrations/20241031_init/
+else
+  echo "❌ Diretório 20241031_init não existe"
+fi
+
 # Gerar Prisma Client
 echo ""
 echo "📦 Gerando Prisma Client..."
