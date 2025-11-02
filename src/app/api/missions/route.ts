@@ -23,7 +23,7 @@ export async function GET(req: NextRequest) {
         active: true,
         OR: [
           { endDate: { gte: new Date() } },
-          { endDate: null },
+          { endDate: { equals: null } },
         ],
       },
       orderBy: { createdAt: 'desc' },
