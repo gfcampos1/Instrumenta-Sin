@@ -16,7 +16,9 @@ import {
   Sliders,
   ChevronLeft,
   ChevronRight,
-  LogOut
+  LogOut,
+  AlertTriangle,
+  BarChart3
 } from 'lucide-react';
 
 interface NavItem {
@@ -29,10 +31,11 @@ interface NavItem {
 const navItems: NavItem[] = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Mapa', href: '/dashboard/mapa', icon: Map },
+  { name: 'Alertas', href: '/dashboard/alertas', icon: AlertTriangle },
+  { name: 'Relatórios', href: '/dashboard/relatorios', icon: BarChart3 },
   { name: 'Usuários', href: '/dashboard/usuarios', icon: Users, adminOnly: true },
-  { name: 'Produtos', href: '/dashboard/produtos', icon: Package, adminOnly: true },
-  { name: 'Cirurgias', href: '/dashboard/cirurgias', icon: Activity },
-  { name: 'Relatórios', href: '/dashboard/relatorios', icon: FileText, adminOnly: true },
+  { name: 'Dispositivos', href: '/dashboard/dispositivos', icon: Package, adminOnly: true },
+  { name: 'Produtos', href: '/dashboard/produtos', icon: FileText, adminOnly: true },
   { name: 'Gamificação', href: '/dashboard/configuracoes', icon: Sliders, adminOnly: true },
   { name: 'Configurações', href: '/dashboard/admin-setup', icon: Settings, adminOnly: true }
 ];

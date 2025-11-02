@@ -107,6 +107,18 @@ export default async function AppPage() {
               📷 Scanner
             </Link>
             <Link
+              href="/app/missoes"
+              className="bg-purple-100 text-purple-800 p-4 rounded-lg text-center font-semibold hover:bg-purple-200 transition"
+            >
+              🎯 Missões
+            </Link>
+            <Link
+              href="/app/conquistas"
+              className="bg-yellow-100 text-yellow-800 p-4 rounded-lg text-center font-semibold hover:bg-yellow-200 transition"
+            >
+              🏆 Conquistas
+            </Link>
+            <Link
               href="/app/historico"
               className="bg-gray-100 text-gray-800 p-4 rounded-lg text-center font-semibold hover:bg-gray-200 transition"
             >
@@ -114,9 +126,9 @@ export default async function AppPage() {
             </Link>
             <Link
               href="/app/ranking"
-              className="bg-yellow-100 text-yellow-800 p-4 rounded-lg text-center font-semibold hover:bg-yellow-200 transition"
+              className="bg-green-100 text-green-800 p-4 rounded-lg text-center font-semibold hover:bg-green-200 transition"
             >
-              🏆 Ranking
+              📊 Ranking
             </Link>
           </div>
         </div>
