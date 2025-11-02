@@ -253,34 +253,40 @@ export default function NovaCirurgiaPage() {
     setLoading(true);
 
     try {
+      const payload = {
+        deviceId: formData.deviceId,
+        surgeryDate: new Date(formData.surgeryDate).toISOString(),
+        surgeryType: formData.surgeryType,
+        hospitalName: formData.hospitalName,
+        hospitalCNPJ: formData.hospitalCNPJ || undefined,
+        latitude: formData.latitude,
+        longitude: formData.longitude,
+        locationAccuracy: 0, // Opcional, valor padrão
+        city: formData.city || undefined,
+        state: formData.state || undefined,
+        status: formData.status,
+        doctorName: formData.doctorName || undefined,
+        doctorConduct: formData.doctorConduct,
+        devicePerformance: formData.devicePerformance,
+        problemsReported: formData.problemsReported || undefined,
+        notes: formData.notes || undefined,
+        deviceRating: formData.deviceRating > 0 ? formData.deviceRating : undefined,
+        doctorRating: formData.doctorRating > 0 ? formData.doctorRating : undefined,
+        photos: formData.photos.length > 0 ? formData.photos : [],
+      };
+
+      console.log('Payload sendo enviado:', payload);
+
       const response = await fetch('/api/surgeries', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          deviceId: formData.deviceId,
-          surgeryDate: new Date(formData.surgeryDate).toISOString(),
-          surgeryType: formData.surgeryType,
-          hospitalName: formData.hospitalName,
-          hospitalCNPJ: formData.hospitalCNPJ || undefined,
-          latitude: formData.latitude,
-          longitude: formData.longitude,
-          city: formData.city || undefined,
-          state: formData.state || undefined,
-          status: formData.status,
-          doctorName: formData.doctorName || undefined,
-          doctorConduct: formData.doctorConduct,
-          devicePerformance: formData.devicePerformance,
-          problemsReported: formData.problemsReported || undefined,
-          notes: formData.notes || undefined,
-          deviceRating: formData.deviceRating > 0 ? formData.deviceRating : undefined,
-          doctorRating: formData.doctorRating > 0 ? formData.doctorRating : undefined,
-          photos: formData.photos,
-        }),
+        body: JSON.stringify(payload),
       });
 
       const result = await response.json();
 
       if (!response.ok) {
+        console.error('Erro de validação:', result.details);
         throw new Error(result.error || 'Erro ao registrar cirurgia');
       }
 
@@ -468,21 +474,15 @@ export default function NovaCirurgiaPage() {
               </h2>
 
               <div className="space-y-4">
-                <div className="w-full">
-                  <label className="block text-sm font-medium text-secondary-700 mb-2">
-                    Data e Hora da Cirurgia
-                  </label>
-                  <input
-                    type="datetime-local"
-                    value={formData.surgeryDate}
-                    onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, surgeryDate: e.target.value }))
-                    }
-                    required
-                    className="w-full px-3 py-2.5 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base bg-white"
-                    style={{ minHeight: '44px' }}
-                  />
-                </div>
+                <Input
+                  label="Data e Hora da Cirurgia"
+                  type="datetime-local"
+                  value={formData.surgeryDate}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, surgeryDate: e.target.value }))
+                  }
+                  required
+                />
 
                 <Input
                   label="Tipo de Cirurgia"

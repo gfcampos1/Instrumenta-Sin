@@ -122,9 +122,12 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
 
+    console.log('Payload recebido:', JSON.stringify(body, null, 2));
+
     // Validar dados
     const validationResult = createSurgerySchema.safeParse(body);
     if (!validationResult.success) {
+      console.error('Erro de validação:', validationResult.error.errors);
       return NextResponse.json(
         {
           success: false,

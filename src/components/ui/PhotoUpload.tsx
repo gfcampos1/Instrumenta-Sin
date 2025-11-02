@@ -56,6 +56,11 @@ export default function PhotoUpload({
 
         if (!response.ok) {
           const error = await response.json();
+          // Se Cloudinary não estiver configurado, usar placeholder
+          if (error.error === 'Cloudinary não configurado') {
+            console.warn('Cloudinary não configurado. Usando placeholder.');
+            return `https://via.placeholder.com/400x300?text=${encodeURIComponent(file.name)}`;
+          }
           throw new Error(error.error || 'Erro ao fazer upload');
         }
 
