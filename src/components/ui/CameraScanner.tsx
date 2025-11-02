@@ -39,25 +39,45 @@ export default function CameraScanner({
       const scanner = new Html5Qrcode('qr-reader');
       scannerRef.current = scanner;
 
+      // Configurações otimizadas para leitura de código de barras em mobile
+      const config = {
+        fps: 10,
+        qrbox: function(viewfinderWidth: number, viewfinderHeight: number) {
+          // Área de scan responsiva e maior para facilitar leitura
+          const minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
+          const qrboxSize = Math.floor(minEdgeSize * 0.8); // 80% da área disponível
+          return {
+            width: Math.min(qrboxSize, 350),
+            height: Math.min(Math.floor(qrboxSize * 0.6), 200), // Mais largo que alto para códigos de barras
+          };
+        },
+        aspectRatio: 1.777778, // 16:9
+        // Configurações avançadas para melhorar foco e leitura
+        videoConstraints: {
+          facingMode,
+          // Solicitar autofoco contínuo (suportado no iOS Safari 14.3+)
+          advanced: [
+            { focusMode: 'continuous' },
+            { focusDistance: 0 }, // 0 = infinito, ajuda em leitura de longe
+          ],
+        },
+        // Suporte explícito para códigos de barras 1D (lineares)
+        // A biblioteca html5-qrcode detecta automaticamente:
+        // - EAN-13 (European Article Number - 13 dígitos, padrão brasileiro)
+        // - UPC-A (Universal Product Code - 12 dígitos, padrão EUA/Canadá)
+        // - EAN-8 (8 dígitos para produtos pequenos)
+        // - CODE_128 (alfanumérico variável)
+        // - CODE_39 (alfanumérico)
+        // - ITF-14 (Interleaved 2 of 5 - 14 dígitos, logística)
+        // - GS1-128 (alfanumérico variável, logística)
+        // - Codabar (numérico)
+        // - QR Code, Data Matrix, PDF_417, Aztec (2D)
+        // Todos os formatos estão habilitados por padrão
+      };
+
       await scanner.start(
         { facingMode }, // Câmera selecionada
-        {
-          fps: 10,
-          qrbox: { width: 280, height: 200 },
-          aspectRatio: 1.777778, // 16:9
-          // Suporte explícito para códigos de barras 1D (lineares)
-          // A biblioteca html5-qrcode detecta automaticamente:
-          // - EAN-13 (European Article Number - 13 dígitos, padrão brasileiro)
-          // - UPC-A (Universal Product Code - 12 dígitos, padrão EUA/Canadá)
-          // - EAN-8 (8 dígitos para produtos pequenos)
-          // - CODE_128 (alfanumérico variável)
-          // - CODE_39 (alfanumérico)
-          // - ITF-14 (Interleaved 2 of 5 - 14 dígitos, logística)
-          // - GS1-128 (alfanumérico variável, logística)
-          // - Codabar (numérico)
-          // - QR Code, Data Matrix, PDF_417, Aztec (2D)
-          // Todos os formatos estão habilitados por padrão
-        },
+        config as any,
         (decodedText) => {
           // Sucesso na leitura
           console.log('Código escaneado:', decodedText);
@@ -208,6 +228,20 @@ export default function CameraScanner({
               Escaneando...
             </p>
           </div>
+          
+          {/* Dicas para melhor leitura */}
+          <div className="bg-black/40 backdrop-blur-sm rounded-lg p-3 space-y-2">
+            <p className="text-xs font-semibold text-yellow-300">
+              📱 Dicas para melhor leitura:
+            </p>
+            <ul className="text-xs space-y-1 text-left opacity-90">
+              <li>• Mantenha distância de 15-25cm do código</li>
+              <li>• Garanta boa iluminação</li>
+              <li>• Mantenha a câmera estável</li>
+              <li>• Alinhe o código dentro do quadro</li>
+            </ul>
+          </div>
+
           <p className="text-xs opacity-80">
             Suporta: EAN-13, UPC-A, EAN-8, ITF-14, GS1-128, CODE-128, CODE-39, QR Code
           </p>
