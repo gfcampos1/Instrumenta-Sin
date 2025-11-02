@@ -60,9 +60,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               }
               ${leftIcon ? 'pl-10' : ''}
               ${rightIcon ? 'pr-10' : ''}
-              ${props.type === 'datetime-local' ? 'max-w-full' : ''}
+              ${props.type === 'datetime-local' ? 'text-sm' : ''}
               ${className}
             `}
+            style={props.type === 'datetime-local' ? { minHeight: '42px', maxHeight: '42px' } : undefined}
             aria-invalid={hasError}
             aria-describedby={
               hasError ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined
