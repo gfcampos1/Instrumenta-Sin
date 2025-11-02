@@ -13,6 +13,7 @@ import {
   Activity,
   FileText,
   Settings,
+  Sliders,
   ChevronLeft,
   ChevronRight,
   LogOut
@@ -32,6 +33,7 @@ const navItems: NavItem[] = [
   { name: 'Produtos', href: '/dashboard/produtos', icon: Package, adminOnly: true },
   { name: 'Cirurgias', href: '/dashboard/cirurgias', icon: Activity },
   { name: 'Relatórios', href: '/dashboard/relatorios', icon: FileText, adminOnly: true },
+  { name: 'Gamificação', href: '/dashboard/configuracoes', icon: Sliders, adminOnly: true },
   { name: 'Configurações', href: '/dashboard/admin-setup', icon: Settings, adminOnly: true }
 ];
 

@@ -362,3 +362,18 @@ model AuditLog {
   @@index([entity, entityId])
   @@index([createdAt])
 }
+
+// ==========================================
+// CONFIGURAÇÕES DE GAMIFICAÇÃO
+// ==========================================
+
+model GamificationSettings {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       Json
+  description String?
+  updatedAt   DateTime @updatedAt
+  updatedBy   String?
+
+  @@map("gamification_settings")
+}

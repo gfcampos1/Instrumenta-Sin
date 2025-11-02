@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import { Icon } from 'leaflet';
+import { Icon, DivIcon } from 'leaflet';
 import { MapPin, Filter, Calendar } from 'lucide-react';
 import Card from '@/components/ui/Card';
 import StatusBadge from '@/components/ui/StatusBadge';
@@ -27,6 +27,13 @@ interface MapaClientProps {
   surgeries: Surgery[];
 }
 
+// Agrupar cirurgias por localização (mesma lat/lng = mesmo local)
+interface LocationGroup {
+  latitude: number;
+  longitude: number;
+  surgeries: Surgery[];
+}
+
 // Fix para os ícones do Leaflet no Next.js
 delete (Icon.Default.prototype as any)._getIconUrl;
 Icon.Default.mergeOptions({
@@ -48,6 +55,30 @@ const createCustomIcon = (status: string) => {
   });
 };
 
+// Ícone de cluster customizado
+const createClusterIcon = (count: number) => {
+  return new DivIcon({
+    html: `<div style="
+      background: linear-gradient(135deg, #4DB5E8 0%, #2B5C9E 100%);
+      color: white;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+      border: 3px solid white;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    ">${count}</div>`,
+    className: 'custom-cluster-icon',
+    iconSize: [40, 40],
+    iconAnchor: [20, 20],
+    popupAnchor: [0, -20]
+  });
+};
+
 export default function MapaClient({ surgeries }: MapaClientProps) {
   const [selectedStatus, setSelectedStatus] = useState<string>('Todos');
   const [mounted, setMounted] = useState(false);
@@ -56,9 +87,41 @@ export default function MapaClient({ surgeries }: MapaClientProps) {
     setMounted(true);
   }, []);
 
+  // Agrupar cirurgias por localização
+  const locationGroups = useMemo(() => {
+    const groups = new Map<string, LocationGroup>();
+    
+    surgeries.forEach(surgery => {
+      // Usar lat/lng com 5 casas decimais como chave (precisão de ~1m)
+      const key = `${surgery.latitude.toFixed(5)},${surgery.longitude.toFixed(5)}`;
+      
+      if (groups.has(key)) {
+        groups.get(key)!.surgeries.push(surgery);
+      } else {
+        groups.set(key, {
+          latitude: surgery.latitude,
+          longitude: surgery.longitude,
+          surgeries: [surgery]
+        });
+      }
+    });
+    
+    return Array.from(groups.values());
+  }, [surgeries]);
+
   const filteredSurgeries = selectedStatus === 'Todos'
     ? surgeries
     : surgeries.filter(s => s.status === selectedStatus);
+
+  // Filtrar grupos também
+  const filteredGroups = useMemo(() => {
+    return locationGroups.map(group => ({
+      ...group,
+      surgeries: group.surgeries.filter(s => 
+        selectedStatus === 'Todos' || s.status === selectedStatus
+      )
+    })).filter(group => group.surgeries.length > 0);
+  }, [locationGroups, selectedStatus]);
 
   // Centro do Brasil (aproximado)
   const defaultCenter: [number, number] = [-15.7801, -47.9292];
@@ -216,72 +279,144 @@ export default function MapaClient({ surgeries }: MapaClientProps) {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
 
-              {filteredSurgeries.map((surgery) => (
-                <Marker
-                  key={surgery.id}
-                  position={[surgery.latitude, surgery.longitude]}
-                  icon={createCustomIcon(surgery.status)}
-                >
-                  <Popup>
-                    <div className="p-2 min-w-[250px]">
-                      <h3 className="font-bold text-secondary-900 mb-2">
-                        {surgery.hospitalName}
-                      </h3>
+              {filteredGroups.map((group, idx) => {
+                const isCluster = group.surgeries.length > 1;
+                const icon = isCluster 
+                  ? createClusterIcon(group.surgeries.length)
+                  : createCustomIcon(group.surgeries[0].status);
 
-                      <div className="space-y-2 text-sm">
-                        <div>
-                          <span className="text-secondary-600">Tipo:</span>{' '}
-                          <span className="font-medium">{surgery.surgeryType}</span>
-                        </div>
+                return (
+                  <Marker
+                    key={`group-${idx}`}
+                    position={[group.latitude, group.longitude]}
+                    icon={icon}
+                  >
+                    <Popup maxWidth={350}>
+                      <div className="p-2">
+                        {isCluster ? (
+                          <>
+                            <h3 className="font-bold text-secondary-900 mb-3">
+                              {group.surgeries[0].hospitalName}
+                            </h3>
+                            <p className="text-sm text-secondary-600 mb-3">
+                              {group.surgeries.length} cirurgias neste local
+                            </p>
+                            
+                            <div className="space-y-3 max-h-96 overflow-y-auto">
+                              {group.surgeries.map((surgery, surgeryIdx) => (
+                                <div 
+                                  key={surgery.id} 
+                                  className={`pb-3 ${surgeryIdx < group.surgeries.length - 1 ? 'border-b border-secondary-200' : ''}`}
+                                >
+                                  <div className="space-y-1.5 text-sm">
+                                    <div className="font-semibold text-secondary-900">
+                                      Cirurgia #{surgeryIdx + 1}
+                                    </div>
+                                    
+                                    <div>
+                                      <span className="text-secondary-600">Tipo:</span>{' '}
+                                      <span className="font-medium">{surgery.surgeryType}</span>
+                                    </div>
 
-                        <div>
-                          <span className="text-secondary-600">Dispositivo:</span>{' '}
-                          <span className="font-medium">{surgery.device.name}</span>
-                        </div>
+                                    <div>
+                                      <span className="text-secondary-600">Dispositivo:</span>{' '}
+                                      <span className="font-medium">{surgery.device.name}</span>
+                                    </div>
 
-                        <div>
-                          <span className="text-secondary-600">Categoria:</span>{' '}
-                          <span className="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded">
-                            {surgery.device.category}
-                          </span>
-                        </div>
+                                    <div>
+                                      <span className="text-secondary-600">Instrumentador:</span>{' '}
+                                      <span className="font-medium">{surgery.user.name}</span>
+                                    </div>
 
-                        <div>
-                          <span className="text-secondary-600">Instrumentador:</span>{' '}
-                          <span className="font-medium">{surgery.user.name}</span>
-                        </div>
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-secondary-600">Status:</span>
+                                      <StatusBadge
+                                        status={
+                                          surgery.status === 'SUCESSO' ? 'green' :
+                                          surgery.status === 'PROBLEMA' ? 'yellow' : 'red'
+                                        }
+                                        label={surgery.status}
+                                      />
+                                    </div>
 
-                        <div>
-                          <span className="text-secondary-600">Status:</span>{' '}
-                          <StatusBadge
-                            status={
-                              surgery.status === 'SUCESSO' ? 'green' :
-                              surgery.status === 'PROBLEMA' ? 'yellow' : 'red'
-                            }
-                            label={surgery.status}
-                          />
-                        </div>
+                                    <div>
+                                      <span className="text-secondary-600">Data:</span>{' '}
+                                      <span className="font-medium">
+                                        {new Date(surgery.surgeryDate).toLocaleDateString('pt-BR')} às{' '}
+                                        {new Date(surgery.surgeryDate).toLocaleTimeString('pt-BR', {
+                                          hour: '2-digit',
+                                          minute: '2-digit'
+                                        })}
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <h3 className="font-bold text-secondary-900 mb-2">
+                              {group.surgeries[0].hospitalName}
+                            </h3>
 
-                        {surgery.city && surgery.state && (
-                          <div>
-                            <span className="text-secondary-600">Local:</span>{' '}
-                            <span className="font-medium">
-                              {surgery.city}, {surgery.state}
-                            </span>
-                          </div>
+                            <div className="space-y-2 text-sm">
+                              <div>
+                                <span className="text-secondary-600">Tipo:</span>{' '}
+                                <span className="font-medium">{group.surgeries[0].surgeryType}</span>
+                              </div>
+
+                              <div>
+                                <span className="text-secondary-600">Dispositivo:</span>{' '}
+                                <span className="font-medium">{group.surgeries[0].device.name}</span>
+                              </div>
+
+                              <div>
+                                <span className="text-secondary-600">Categoria:</span>{' '}
+                                <span className="text-xs bg-primary-100 text-primary-700 px-2 py-1 rounded">
+                                  {group.surgeries[0].device.category}
+                                </span>
+                              </div>
+
+                              <div>
+                                <span className="text-secondary-600">Instrumentador:</span>{' '}
+                                <span className="font-medium">{group.surgeries[0].user.name}</span>
+                              </div>
+
+                              <div>
+                                <span className="text-secondary-600">Status:</span>{' '}
+                                <StatusBadge
+                                  status={
+                                    group.surgeries[0].status === 'SUCESSO' ? 'green' :
+                                    group.surgeries[0].status === 'PROBLEMA' ? 'yellow' : 'red'
+                                  }
+                                  label={group.surgeries[0].status}
+                                />
+                              </div>
+
+                              {group.surgeries[0].city && group.surgeries[0].state && (
+                                <div>
+                                  <span className="text-secondary-600">Local:</span>{' '}
+                                  <span className="font-medium">
+                                    {group.surgeries[0].city}, {group.surgeries[0].state}
+                                  </span>
+                                </div>
+                              )}
+
+                              <div>
+                                <span className="text-secondary-600">Data:</span>{' '}
+                                <span className="font-medium">
+                                  {new Date(group.surgeries[0].surgeryDate).toLocaleDateString('pt-BR')}
+                                </span>
+                              </div>
+                            </div>
+                          </>
                         )}
-
-                        <div>
-                          <span className="text-secondary-600">Data:</span>{' '}
-                          <span className="font-medium">
-                            {new Date(surgery.surgeryDate).toLocaleDateString('pt-BR')}
-                          </span>
-                        </div>
                       </div>
-                    </div>
-                  </Popup>
-                </Marker>
-              ))}
+                    </Popup>
+                  </Marker>
+                );
+              })}
             </MapContainer>
           </div>
         )}
