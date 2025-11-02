@@ -318,9 +318,9 @@ export default function NovaCirurgiaPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-secondary-50">
+    <div className="min-h-screen bg-secondary-50 flex flex-col">
       {/* Header com gradiente */}
-      <header className="bg-gradient-sintegra shadow-lg sticky top-0 z-10">
+      <header className="bg-gradient-sintegra shadow-lg sticky top-0 z-10 flex-shrink-0">
         <div className="max-w-3xl mx-auto px-4 py-6">
           <div className="flex items-center gap-4">
             <Link
@@ -340,7 +340,7 @@ export default function NovaCirurgiaPage() {
       </header>
 
       {/* Progress bar */}
-      <div className="bg-white border-b border-secondary-200 sticky top-[88px] z-10">
+      <div className="bg-white border-b border-secondary-200 sticky top-[88px] z-10 flex-shrink-0">
         <div className="max-w-3xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             {steps.map((step, index) => {
@@ -401,8 +401,8 @@ export default function NovaCirurgiaPage() {
       </div>
 
       {/* Form content */}
-      <main className="max-w-3xl mx-auto px-4 py-6 pb-28">
-        <div className="bg-white rounded-xl shadow-md p-6">
+      <main className="flex-1 max-w-3xl mx-auto px-4 py-6 pb-28 w-full">
+        <div className="bg-white rounded-xl shadow-md p-6 min-h-[calc(100vh-280px)]">
           {/* Step 1: Dispositivo */}
           {currentStep === 1 && (
             <div className="space-y-6">

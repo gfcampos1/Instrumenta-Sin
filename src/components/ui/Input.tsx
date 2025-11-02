@@ -60,6 +60,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               }
               ${leftIcon ? 'pl-10' : ''}
               ${rightIcon ? 'pr-10' : ''}
+              ${props.type === 'datetime-local' ? 'max-w-full' : ''}
               ${className}
             `}
             aria-invalid={hasError}
