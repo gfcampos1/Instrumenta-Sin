@@ -50,7 +50,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             className={`
-              w-full rounded-lg border bg-white px-4 py-2.5 text-secondary-900
+              w-full rounded-lg border bg-white text-secondary-900
               transition-colors duration-200
               focus:outline-none focus:ring-2 focus:ring-offset-1
               disabled:bg-secondary-100 disabled:cursor-not-allowed
@@ -60,10 +60,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               }
               ${leftIcon ? 'pl-10' : ''}
               ${rightIcon ? 'pr-10' : ''}
-              ${props.type === 'datetime-local' ? 'text-sm' : ''}
+              ${props.type === 'datetime-local' ? 'px-3 py-2 text-sm h-[42px]' : 'px-4 py-2.5'}
               ${className}
             `}
-            style={props.type === 'datetime-local' ? { minHeight: '42px', maxHeight: '42px' } : undefined}
             aria-invalid={hasError}
             aria-describedby={
               hasError ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined
