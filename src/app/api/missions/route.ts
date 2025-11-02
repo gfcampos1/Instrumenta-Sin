@@ -21,10 +21,7 @@ export async function GET(req: NextRequest) {
     const dbMissions = await prisma.mission.findMany({
       where: {
         active: true,
-        OR: [
-          { endDate: { gte: new Date() } },
-          { endDate: { equals: null } },
-        ],
+        endDate: { gte: new Date() },
       },
       orderBy: { createdAt: 'desc' },
     });
