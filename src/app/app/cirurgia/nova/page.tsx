@@ -312,9 +312,9 @@ export default function NovaCirurgiaPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-secondary-50 pb-20">
+    <div className="min-h-screen bg-secondary-50">
       {/* Header com gradiente */}
-      <header className="bg-gradient-sintegra shadow-lg">
+      <header className="bg-gradient-sintegra shadow-lg sticky top-0 z-10">
         <div className="max-w-3xl mx-auto px-4 py-6">
           <div className="flex items-center gap-4">
             <Link
@@ -334,7 +334,7 @@ export default function NovaCirurgiaPage() {
       </header>
 
       {/* Progress bar */}
-      <div className="bg-white border-b border-secondary-200">
+      <div className="bg-white border-b border-secondary-200 sticky top-[88px] z-10">
         <div className="max-w-3xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             {steps.map((step, index) => {
@@ -395,7 +395,7 @@ export default function NovaCirurgiaPage() {
       </div>
 
       {/* Form content */}
-      <div className="max-w-3xl mx-auto px-4 py-6">
+      <main className="max-w-3xl mx-auto px-4 py-6 pb-28">
         <div className="bg-white rounded-xl shadow-md p-6">
           {/* Step 1: Dispositivo */}
           {currentStep === 1 && (
@@ -468,7 +468,7 @@ export default function NovaCirurgiaPage() {
               </h2>
 
               <div className="space-y-4">
-                <div>
+                <div className="w-full">
                   <label className="block text-sm font-medium text-secondary-700 mb-2">
                     Data e Hora da Cirurgia
                   </label>
@@ -479,7 +479,8 @@ export default function NovaCirurgiaPage() {
                       setFormData((prev) => ({ ...prev, surgeryDate: e.target.value }))
                     }
                     required
-                    className="w-full px-4 py-2.5 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base"
+                    className="w-full px-3 py-2.5 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent text-base bg-white"
+                    style={{ minHeight: '44px' }}
                   />
                 </div>
 
@@ -770,7 +771,7 @@ export default function NovaCirurgiaPage() {
             )}
           </div>
         </div>
-      </div>
+      </main>
 
       {/* Bottom Navigation */}
       <BottomNav />
