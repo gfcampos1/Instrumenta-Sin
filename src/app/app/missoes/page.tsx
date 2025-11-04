@@ -17,10 +17,7 @@ export default async function MissoesPage() {
     prisma.mission.findMany({
       where: {
         active: true,
-        OR: [
-          { endDate: { gte: new Date() } },
-          { endDate: null },
-        ],
+        endDate: { gte: new Date() },
       },
       orderBy: { createdAt: 'desc' },
     }),
