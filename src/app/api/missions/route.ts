@@ -170,7 +170,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { title, description, pointsReward, startDate, endDate, active } = body;
+  const { title, description, pointsReward, startDate, endDate, active, targetCount, missionType } = body;
 
     if (!title || !description || !pointsReward) {
       return NextResponse.json(
@@ -184,9 +184,16 @@ export async function POST(req: NextRequest) {
         title,
         description,
         pointsReward,
+        // Defaults for required fields
+        targetCount: targetCount ?? 1,
+        missionType: missionType ?? 'REGISTER_SURGERIES',
         startDate: startDate ? new Date(startDate) : new Date(),
-        // Prisma field expects string | Date; use undefined to omit the field when no endDate
-        endDate: endDate ? new Date(endDate) : undefined,
+        // endDate is required in the schema; if not provided, default to the startDate (or now)
+        endDate: endDate
+          ? new Date(endDate)
+          : startDate
+          ? new Date(startDate)
+          : new Date(),
         active: active ?? true,
       },
     });
