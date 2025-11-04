@@ -185,7 +185,8 @@ export async function POST(req: NextRequest) {
         description,
         pointsReward,
         startDate: startDate ? new Date(startDate) : new Date(),
-        endDate: endDate ? new Date(endDate) : null,
+        // Prisma field expects string | Date; use undefined to omit the field when no endDate
+        endDate: endDate ? new Date(endDate) : undefined,
         active: active ?? true,
       },
     });
